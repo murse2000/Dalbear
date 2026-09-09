@@ -1,3 +1,4 @@
+import AppLocalization
 import AppKit
 import Carbon
 import FolderCore
@@ -28,7 +29,7 @@ final class FolderHubController: NSObject, NSCollectionViewDataSource, NSCollect
     private let collection = FolderCollectionView()
     private let tabs = NSStackView()
     private let path = NSPathControl()
-    private let status = NSTextField(labelWithString: "작업 폴더를 추가해 주세요.")
+    private let status = NSTextField(labelWithString: L10n.text("작업 폴더를 추가해 주세요."))
     private let paw = BearPawView()
     private var pinButton: NSButton?
     private var viewButton: NSButton?
@@ -46,7 +47,7 @@ final class FolderHubController: NSObject, NSCollectionViewDataSource, NSCollect
     private var previewView: QLPreviewView?
     private var hotKey: EventHotKeyRef?
     private var hotKeyHandler: EventHandlerRef?
-    private var shortcutHint = "⌘⌥→ 열기"
+    private var shortcutHint = L10n.text("⌘⌥→ 열기")
 
     override init() {
         super.init()
@@ -72,7 +73,7 @@ final class FolderHubController: NSObject, NSCollectionViewDataSource, NSCollect
             return noErr
         }, 1, &type, context, &hotKeyHandler)
         let result = RegisterEventHotKey(UInt32(kVK_RightArrow), UInt32(cmdKey | optionKey), EventHotKeyID(signature: 0x4D574648, id: 1), GetApplicationEventTarget(), 0, &hotKey)
-        shortcutHint = result == noErr ? "⌘⌥→ 열기" : "단축키 사용 중 · 메뉴에서 열기"
+        shortcutHint = result == noErr ? L10n.text("⌘⌥→ 열기") : L10n.text("단축키 사용 중 · 메뉴에서 열기")
         status.toolTip = shortcutHint
     }
 
@@ -159,8 +160,8 @@ final class FolderHubController: NSObject, NSCollectionViewDataSource, NSCollect
 
     private func makePanel() {
         let panel = FolderHubPanel(contentRect: NSRect(x: 0, y: 0, width: 900, height: 446), styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
-        panel.title = "폴더 허브"
-        panel.setAccessibilityLabel("폴더 허브")
+        panel.title = L10n.text("폴더 허브")
+        panel.setAccessibilityLabel(L10n.text("폴더 허브"))
         panel.isReleasedWhenClosed = false
         panel.hidesOnDeactivate = false
         panel.level = .popUpMenu
@@ -192,7 +193,7 @@ final class FolderHubController: NSObject, NSCollectionViewDataSource, NSCollect
         tabs.frame = NSRect(x: 0, y: 0, width: 820, height: 30)
         tabsScroll.documentView = tabs
         content.addSubview(tabsScroll)
-        let add = button("plus", "작업 폴더 추가", #selector(addWorkspace))
+        let add = button("plus", L10n.text("작업 폴더 추가"), #selector(addWorkspace))
         add.frame = NSRect(x: 850, y: 298, width: 30, height: 28)
         add.autoresizingMask = [.minXMargin, .minYMargin]
         content.addSubview(add)
@@ -225,7 +226,7 @@ final class FolderHubController: NSObject, NSCollectionViewDataSource, NSCollect
         scroll.documentView = collection
         content.addSubview(scroll)
 
-        let up = button("chevron.up", "상위 폴더", #selector(goUp))
+        let up = button("chevron.up", L10n.text("상위 폴더"), #selector(goUp))
         up.frame = NSRect(x: 14, y: 14, width: 26, height: 26)
         content.addSubview(up)
         path.frame = NSRect(x: 46, y: 15, width: 550, height: 24)
@@ -241,7 +242,7 @@ final class FolderHubController: NSObject, NSCollectionViewDataSource, NSCollect
         status.maximumNumberOfLines = 2
         status.autoresizingMask = [.minYMargin]
         content.addSubview(status)
-        let controls = [("arrow.clockwise", "새로고침", #selector(refresh)), ("square.grid.2x2", "격자 / 목록 보기", #selector(toggleView)), ("pin", "창 고정", #selector(togglePin)), ("ellipsis.circle", "폴더 작업", #selector(showMenu)), ("xmark", "폴더 허브 닫기", #selector(closePanel))]
+        let controls = [("arrow.clockwise", L10n.text("새로고침"), #selector(refresh)), ("square.grid.2x2", L10n.text("격자 / 목록 보기"), #selector(toggleView)), ("pin", L10n.text("창 고정"), #selector(togglePin)), ("ellipsis.circle", L10n.text("폴더 작업"), #selector(showMenu)), ("xmark", L10n.text("폴더 허브 닫기"), #selector(closePanel))]
         for (i, entry) in controls.enumerated() {
             let control = button(entry.0, entry.1, entry.2)
             control.frame = NSRect(x: 716 + CGFloat(i) * 34, y: 14, width: 28, height: 26)
@@ -304,7 +305,7 @@ final class FolderHubController: NSObject, NSCollectionViewDataSource, NSCollect
             directory = nil; files = []; path.url = nil
             watcher?.cancel(); watcher = nil; loadID = UUID()
             collection.reloadData()
-            status.stringValue = "‘\(workspace.title)’ 폴더를 찾을 수 없습니다. 작업 폴더를 다시 추가해 주세요."
+            status.stringValue = L10n.text("‘%@’ 폴더를 찾을 수 없습니다. 작업 폴더를 다시 추가해 주세요.", workspace.title)
         }
     }
 
@@ -313,7 +314,7 @@ final class FolderHubController: NSObject, NSCollectionViewDataSource, NSCollect
     }
 
     @objc private func addWorkspace() {
-        chooseFolder(prompt: "작업 폴더 추가") { [weak self] urls in
+        chooseFolder(prompt: L10n.text("작업 폴더 추가")) { [weak self] urls in
             guard let self else { return }
             do {
                 for url in urls {
@@ -333,7 +334,7 @@ final class FolderHubController: NSObject, NSCollectionViewDataSource, NSCollect
         let chooser = NSOpenPanel()
         chooser.canChooseFiles = false
         chooser.canChooseDirectories = true
-        chooser.allowsMultipleSelection = prompt == "작업 폴더 추가"
+        chooser.allowsMultipleSelection = prompt == L10n.text("작업 폴더 추가")
         chooser.prompt = prompt
         interacting = true
         chooser.beginSheetModal(for: panel) { [weak self] result in
@@ -356,7 +357,7 @@ final class FolderHubController: NSObject, NSCollectionViewDataSource, NSCollect
         guard let directory, panel?.isVisible == true else { return }
         let id = UUID(); loadID = id
         let sorting = sort
-        status.stringValue = "폴더를 읽는 중…"
+        status.stringValue = L10n.text("폴더를 읽는 중…")
         fileQueue.async { [weak self] in
             let result = Result { try FolderFiles.list(directory, sort: sorting) }
             DispatchQueue.main.async {
@@ -366,7 +367,7 @@ final class FolderHubController: NSObject, NSCollectionViewDataSource, NSCollect
                     self.files = files
                     self.collection.selectionIndexPaths = []
                     self.collection.reloadData()
-                    self.status.stringValue = files.isEmpty ? "빈 폴더입니다. 파일을 이곳으로 끌어오세요." : "\(files.count)개 항목 · Space 미리보기 · \(self.shortcutHint)"
+                    self.status.stringValue = files.isEmpty ? L10n.text("빈 폴더입니다. 파일을 이곳으로 끌어오세요.") : L10n.text("%ld개 항목 · Space 미리보기 · %@", files.count, self.shortcutHint)
                     self.watch(directory)
                 case .failure(let error):
                     self.files = []
@@ -425,9 +426,9 @@ final class FolderHubController: NSObject, NSCollectionViewDataSource, NSCollect
         updateButtons()
     }
     private func updateButtons() {
-        pinButton?.image = NSImage(systemSymbolName: pinned ? "pin.fill" : "pin", accessibilityDescription: "창 고정")
-        pinButton?.setAccessibilityValue(pinned ? "켜짐" : "꺼짐")
-        viewButton?.image = NSImage(systemSymbolName: listMode ? "list.bullet" : "square.grid.2x2", accessibilityDescription: "격자 / 목록 보기")
+        pinButton?.image = NSImage(systemSymbolName: pinned ? "pin.fill" : "pin", accessibilityDescription: L10n.text("창 고정"))
+        pinButton?.setAccessibilityValue(pinned ? L10n.text("켜짐") : L10n.text("꺼짐"))
+        viewButton?.image = NSImage(systemSymbolName: listMode ? "list.bullet" : "square.grid.2x2", accessibilityDescription: L10n.text("격자 / 목록 보기"))
     }
     @objc private func closePanel() { hide() }
 
@@ -462,8 +463,8 @@ final class FolderHubController: NSObject, NSCollectionViewDataSource, NSCollect
             return item
         }
         let selected = !selectedFiles.isEmpty
-        _ = add("열기", #selector(openSelection), enabled: selected)
-        let openWith = add("다음으로 열기", #selector(openSelection), enabled: selectedFiles.count == 1)
+        _ = add(L10n.text("열기"), #selector(openSelection), enabled: selected)
+        let openWith = add(L10n.text("다음으로 열기"), #selector(openSelection), enabled: selectedFiles.count == 1)
         if let url = selectedFiles.first {
             let apps = NSMenu()
             for app in NSWorkspace.shared.urlsForApplications(toOpen: url) {
@@ -472,18 +473,18 @@ final class FolderHubController: NSObject, NSCollectionViewDataSource, NSCollect
             }
             openWith.submenu = apps
         }
-        _ = add("미리보기", #selector(preview), enabled: selected)
-        _ = add("Finder에서 보기", #selector(reveal), enabled: directory != nil)
-        _ = add("공유…", #selector(share), enabled: selected)
+        _ = add(L10n.text("미리보기"), #selector(preview), enabled: selected)
+        _ = add(L10n.text("Finder에서 보기"), #selector(reveal), enabled: directory != nil)
+        _ = add(L10n.text("공유…"), #selector(share), enabled: selected)
         _ = add("AirDrop…", #selector(airDropSelection), enabled: selected)
         menu.addItem(.separator())
-        _ = add("복사", #selector(copyFiles), enabled: selected)
-        _ = add("붙여넣기", #selector(pasteCopy), enabled: directory != nil)
-        _ = add("여기로 이동 (⌘⌥V)", #selector(pasteMove), enabled: directory != nil)
-        _ = add("선택 항목 이동…", #selector(moveSelection), enabled: selected)
-        _ = add("이름 변경…", #selector(renameFile), enabled: selectedFiles.count == 1)
-        _ = add("휴지통으로 이동", #selector(trashFiles), enabled: selected)
-        _ = add("새 폴더…", #selector(newFolder), enabled: directory != nil)
+        _ = add(L10n.text("복사"), #selector(copyFiles), enabled: selected)
+        _ = add(L10n.text("붙여넣기"), #selector(pasteCopy), enabled: directory != nil)
+        _ = add(L10n.text("여기로 이동 (⌘⌥V)"), #selector(pasteMove), enabled: directory != nil)
+        _ = add(L10n.text("선택 항목 이동…"), #selector(moveSelection), enabled: selected)
+        _ = add(L10n.text("이름 변경…"), #selector(renameFile), enabled: selectedFiles.count == 1)
+        _ = add(L10n.text("휴지통으로 이동"), #selector(trashFiles), enabled: selected)
+        _ = add(L10n.text("새 폴더…"), #selector(newFolder), enabled: directory != nil)
         menu.addItem(.separator())
         let sortMenu = NSMenu()
         for sorting in FolderSort.allCases {
@@ -491,10 +492,10 @@ final class FolderHubController: NSObject, NSCollectionViewDataSource, NSCollect
             item.target = self; item.representedObject = sorting.rawValue
             item.state = sort == sorting ? .on : .off
         }
-        add("정렬", #selector(refresh)).submenu = sortMenu
-        _ = add("작업 폴더 추가…", #selector(addWorkspace))
-        _ = add("현재 작업 폴더 이름 변경…", #selector(renameWorkspace), enabled: selectedWorkspace != nil)
-        _ = add("현재 작업 폴더 등록 해제", #selector(removeWorkspace), enabled: selectedWorkspace != nil)
+        add(L10n.text("정렬"), #selector(refresh)).submenu = sortMenu
+        _ = add(L10n.text("작업 폴더 추가…"), #selector(addWorkspace))
+        _ = add(L10n.text("현재 작업 폴더 이름 변경…"), #selector(renameWorkspace), enabled: selectedWorkspace != nil)
+        _ = add(L10n.text("현재 작업 폴더 등록 해제"), #selector(removeWorkspace), enabled: selectedWorkspace != nil)
         return menu
     }
 
@@ -524,7 +525,7 @@ final class FolderHubController: NSObject, NSCollectionViewDataSource, NSCollect
     }
     @objc private func moveSelection() {
         let urls = selectedFiles
-        chooseFolder(prompt: "이동할 폴더 선택") { [weak self] targets in
+        chooseFolder(prompt: L10n.text("이동할 폴더 선택")) { [weak self] targets in
             guard let target = targets.first else { return }
             self?.perform { try FolderFiles.transfer(urls, to: target, move: true) }
         }
@@ -533,9 +534,9 @@ final class FolderHubController: NSObject, NSCollectionViewDataSource, NSCollect
         let urls = selectedFiles
         guard !urls.isEmpty, let panel else { return }
         let alert = NSAlert()
-        alert.messageText = "선택한 \(urls.count)개 항목을 휴지통으로 이동할까요?"
-        alert.informativeText = "Finder의 휴지통에서 복원할 수 있습니다."
-        alert.addButton(withTitle: "휴지통으로 이동"); alert.addButton(withTitle: "취소")
+        alert.messageText = L10n.text("선택한 %ld개 항목을 휴지통으로 이동할까요?", urls.count)
+        alert.informativeText = L10n.text("Finder의 휴지통에서 복원할 수 있습니다.")
+        alert.addButton(withTitle: L10n.text("휴지통으로 이동")); alert.addButton(withTitle: L10n.text("취소"))
         alert.beginSheetModal(for: panel) { [weak self] response in
             if response == .alertFirstButtonReturn { self?.perform { for url in urls { try FileManager.default.trashItem(at: url, resultingItemURL: nil) } } }
         }
@@ -547,26 +548,26 @@ final class FolderHubController: NSObject, NSCollectionViewDataSource, NSCollect
         let input = NSTextField(string: value)
         input.frame = NSRect(x: 0, y: 0, width: 300, height: 26)
         alert.accessoryView = input
-        alert.addButton(withTitle: "확인"); alert.addButton(withTitle: "취소")
+        alert.addButton(withTitle: L10n.text("확인")); alert.addButton(withTitle: L10n.text("취소"))
         alert.window.initialFirstResponder = input
         alert.beginSheetModal(for: panel) { response in if response == .alertFirstButtonReturn { completion(input.stringValue) } }
     }
     @objc private func renameFile() {
         guard let source = selectedFiles.first else { return }
-        promptName("이름 변경", value: source.lastPathComponent) { [weak self] name in
+        promptName(L10n.text("이름 변경"), value: source.lastPathComponent) { [weak self] name in
             guard name != source.lastPathComponent else { return }
             self?.perform { try FileManager.default.moveItem(at: source, to: FolderFiles.namedURL(name, in: source.deletingLastPathComponent())) }
         }
     }
     @objc private func newFolder() {
         guard let directory else { return }
-        promptName("새 폴더 이름") { [weak self] name in
+        promptName(L10n.text("새 폴더 이름")) { [weak self] name in
             self?.perform { try FileManager.default.createDirectory(at: FolderFiles.namedURL(name, in: directory), withIntermediateDirectories: false) }
         }
     }
     @objc private func renameWorkspace() {
         guard let index = workspaces.firstIndex(where: { $0.id == selectedWorkspace }) else { return }
-        promptName("작업 폴더 표시 이름", value: workspaces[index].title) { [weak self] name in
+        promptName(L10n.text("작업 폴더 표시 이름"), value: workspaces[index].title) { [weak self] name in
             guard let self, !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
             self.workspaces[index].title = name
             self.saveWorkspaces(); self.rebuildTabs()
@@ -579,7 +580,7 @@ final class FolderHubController: NSObject, NSCollectionViewDataSource, NSCollect
         files = []; collection.reloadData()
         watcher?.cancel(); watcher = nil; loadID = UUID()
         saveWorkspaces(); rebuildTabs()
-        status.stringValue = "작업 폴더를 추가해 주세요. 원본 파일은 삭제하지 않습니다."
+        status.stringValue = L10n.text("작업 폴더를 추가해 주세요. 원본 파일은 삭제하지 않습니다.")
         selectWorkspace(workspaces.first?.id)
     }
     @objc private func changeSort(_ sender: NSMenuItem) {
@@ -591,7 +592,7 @@ final class FolderHubController: NSObject, NSCollectionViewDataSource, NSCollect
 
     private func perform(_ operation: @escaping () throws -> Void) {
         guard !busy else { return }
-        busy = true; status.stringValue = "파일 작업 중…"
+        busy = true; status.stringValue = L10n.text("파일 작업 중…")
         fileQueue.async { [weak self] in
             let result = Result { try operation() }
             DispatchQueue.main.async {
@@ -682,7 +683,7 @@ final class FolderHubController: NSObject, NSCollectionViewDataSource, NSCollect
             return true
         }
         if let image = NSImage(pasteboard: pasteboard), let tiff = image.tiffRepresentation, let bitmap = NSBitmapImageRep(data: tiff), let png = bitmap.representation(using: .png, properties: [:]) {
-            perform { try png.write(to: target.appendingPathComponent("이미지-\(UUID().uuidString).png"), options: .withoutOverwriting) }
+            perform { try png.write(to: target.appendingPathComponent(L10n.text("이미지-%@.png", UUID().uuidString)), options: .withoutOverwriting) }
             return true
         }
         return false

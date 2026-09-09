@@ -1,3 +1,4 @@
+import AppLocalization
 import AppKit
 import ApplicationServices
 import ScrollCore
@@ -30,11 +31,11 @@ final class ScrollController {
     private static let outputMarker: Int64 = 0x4D5746534D4F4F54
 
     var status: String {
-        if !enabled && !safariButtonsEnabled { return "마우스 입력 기능이 꺼져 있습니다" }
-        if !trusted { return "손쉬운 사용 권한이 필요합니다" }
-        if failed { return "스크롤 연결 실패 · 앱을 다시 실행해 주세요" }
-        if !active { return "마우스 입력 연결 중" }
-        return enabled ? "마우스 휠 반전 · 부드러운 스크롤 사용 중" : "Safari 뒤로·앞으로 버튼 사용 중"
+        if !enabled && !safariButtonsEnabled { return L10n.text("마우스 입력 기능이 꺼져 있습니다") }
+        if !trusted { return L10n.text("손쉬운 사용 권한이 필요합니다") }
+        if failed { return L10n.text("스크롤 연결 실패 · 앱을 다시 실행해 주세요") }
+        if !active { return L10n.text("마우스 입력 연결 중") }
+        return enabled ? L10n.text("마우스 휠 반전 · 부드러운 스크롤 사용 중") : L10n.text("Safari 뒤로·앞으로 버튼 사용 중")
     }
 
     init() {

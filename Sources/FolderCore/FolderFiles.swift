@@ -1,3 +1,4 @@
+import AppLocalization
 import Foundation
 
 public struct FolderFile {
@@ -22,10 +23,10 @@ public enum FolderSort: String, CaseIterable {
 
     public var title: String {
         switch self {
-        case .name: return "이름순"
-        case .modified: return "수정일순"
-        case .kind: return "종류순"
-        case .size: return "크기순"
+        case .name: return L10n.text("이름순")
+        case .modified: return L10n.text("수정일순")
+        case .kind: return L10n.text("종류순")
+        case .size: return L10n.text("크기순")
         }
     }
 }
@@ -51,10 +52,10 @@ public enum FolderFiles {
         let target = parent.appendingPathComponent(source.lastPathComponent)
         // 폴더를 자기 자신 또는 하위 폴더로 복사·이동하지 않습니다.
         if parent.pathComponents.starts(with: origin.pathComponents) || target == origin {
-            throw failure("같은 위치 또는 원본 폴더 내부로 복사하거나 이동할 수 없습니다.")
+            throw failure(L10n.text("같은 위치 또는 원본 폴더 내부로 복사하거나 이동할 수 없습니다."))
         }
         if FileManager.default.fileExists(atPath: target.path) {
-            throw failure("‘\(source.lastPathComponent)’ 항목이 이미 있습니다. 기존 파일은 변경하지 않았습니다.")
+            throw failure(L10n.text("‘%@’ 항목이 이미 있습니다. 기존 파일은 변경하지 않았습니다.", source.lastPathComponent))
         }
         return target
     }
@@ -62,7 +63,7 @@ public enum FolderFiles {
     public static func transfer(_ sources: [URL], to folder: URL, move: Bool) throws {
         let targets = try sources.map { try destination(for: $0, in: folder) }
         guard Set(targets).count == targets.count else {
-            throw failure("선택한 항목 사이에 같은 이름이 있습니다. 파일을 한 번에 옮길 수 없습니다.")
+            throw failure(L10n.text("선택한 항목 사이에 같은 이름이 있습니다. 파일을 한 번에 옮길 수 없습니다."))
         }
         for (source, target) in zip(sources, targets) {
             if move { try FileManager.default.moveItem(at: source, to: target) }
@@ -72,11 +73,11 @@ public enum FolderFiles {
 
     public static func namedURL(_ name: String, in folder: URL) throws -> URL {
         guard !name.isEmpty, name != ".", name != "..", !name.contains("/"), !name.contains(":"), !name.contains("\0") else {
-            throw failure("유효한 파일 또는 폴더 이름을 입력해 주세요.")
+            throw failure(L10n.text("유효한 파일 또는 폴더 이름을 입력해 주세요."))
         }
         let url = folder.appendingPathComponent(name)
         guard !FileManager.default.fileExists(atPath: url.path) else {
-            throw failure("같은 이름의 항목이 이미 있습니다.")
+            throw failure(L10n.text("같은 이름의 항목이 이미 있습니다."))
         }
         return url
     }

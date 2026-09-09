@@ -4,11 +4,31 @@ Apple Silicon 전용 macOS 메뉴 막대 유틸리티입니다. 마우스 휠 �
 
 ## 설치
 
-[릴리즈](https://github.com/murse2000/Dalbear/releases/latest)에서 `Dalbear-0.1.0-arm64.dmg`를 내려받아 엽니다. Dalbear 아이콘을 Applications 폴더로 드래그한 뒤 응용 프로그램 폴더에서 실행하세요. 기존 앱은 먼저 종료하고 중복 복사 대신 교체합니다.
+[릴리즈](https://github.com/murse2000/Dalbear/releases/latest)에서 `Dalbear-0.1.1-arm64.dmg`를 내려받아 엽니다. Dalbear 아이콘을 Applications 폴더로 드래그한 뒤 응용 프로그램 폴더에서 실행하세요. 기존 앱은 먼저 종료하고 중복 복사 대신 교체합니다.
 
 휠 반전과 Safari 옆 버튼을 사용하려면 설치한 Dalbear에 손쉬운 사용 권한을 허용하세요. 자동 실행은 설치한 앱의 **로그인 시 자동 실행**에서 켭니다.
 
 현재 릴리즈는 로컬 서명 빌드이며 Developer ID 서명과 Apple 공증은 포함하지 않습니다. 인터넷에서 내려받으면 macOS가 처음 실행을 차단할 수 있습니다. 출처를 신뢰하는 경우 [Apple의 실행 허용 안내](https://support.apple.com/102445)를 참고하세요.
+
+## 언어와 자동 업데이트
+
+macOS의 선호 언어에 따라 한국어 또는 영어로 표시하며, 지원하지 않는 언어에서는 영어를 사용합니다. 언어를 바꾼 뒤 Dalbear를 다시 실행하세요. 설정·메뉴·폴더 작업과 오류 메시지에 적용됩니다.
+
+V0.1.1부터 GitHub 최신 릴리즈를 약 6시간마다 확인합니다. 새 버전을 찾으면 업데이트 창 또는 메뉴 막대의 ↑ 표시와 새 버전 메뉴로 알립니다. **업데이트 확인…**으로 직접 확인할 수 있으며, 사용자가 승인하기 전에는 다운로드하거나 설치하지 않습니다. 다운로드 완료 후 **설치 및 재실행**을 누르면 교체합니다. V0.1.0 사용자는 이번 버전을 DMG로 한 번 설치해야 합니다.
+
+Sparkle 2.9.6으로 업데이트 파일과 `appcast.xml`의 EdDSA 서명을 검증합니다. 이 서명은 Developer ID 서명과 다릅니다. 현재 로컬 서명 빌드는 업데이트 후 손쉬운 사용 권한을 다시 등록해야 할 수 있습니다. 권한을 안정적으로 유지하려면 동일한 번들 ID와 Developer ID 서명으로 배포해야 합니다.
+
+### 새 버전 배포
+
+버전은 `V0.1.0 → V0.1.1 → V0.1.2` 순서로 마지막 숫자를 1씩 올립니다. `Info.plist`의 `CFBundleShortVersionString`과 `CFBundleVersion`을 함께 올리고, `releases/v버전.md`에 변경사항을 작성한 뒤 커밋합니다.
+
+```sh
+bash scripts/publish-release.sh releases/v0.1.2.md
+```
+
+이 스크립트는 테스트·DMG 생성·업데이트 서명 후 Git 태그와 릴리즈를 게시합니다. 모든 파일을 먼저 업로드하고 마지막에 최신 릴리즈로 공개합니다. 단순히 GitHub에서 빈 릴리즈만 만들면 자동 업데이트되지 않으므로 반드시 서명된 `appcast.xml`과 DMG를 함께 게시하세요.
+
+업데이트 개인 키는 macOS 키체인의 `com.dalbear.updates` 계정에만 보관하며 저장소에 포함하지 않습니다. 최초 설정에 사용한 키를 안전하게 백업해야 다른 Mac에서도 기존 사용자용 업데이트를 서명할 수 있습니다. 키를 잃어버렸다고 새 키를 덮어쓰면 기존 앱이 업데이트를 검증하지 못합니다. 빌드만 할 때는 개인 키가 필요하지 않습니다.
 
 ## 노치 숨기기와 둥근 모서리
 
@@ -51,7 +71,7 @@ open dist/MouseWheelFix.app
 bash scripts/build-dmg.sh
 ```
 
-결과물은 `dist/Dalbear-0.1.0-arm64.dmg`와 `dist/Dalbear-설치안내.txt`입니다. 기존 설정 호환성을 위해 내부 실행 파일 이름과 번들 ID는 유지합니다.
+결과물은 `dist/Dalbear-0.1.1-arm64.dmg`와 `dist/Dalbear-설치안내.txt`입니다. 기존 설정 호환성을 위해 내부 실행 파일 이름과 번들 ID는 유지합니다.
 
 생성된 `dist/MouseWheelFix.app`을 응용 프로그램 폴더로 옮긴 뒤 실행하는 것을 권장합니다. 실행 위치를 정한 뒤 손쉬운 사용 권한을 허용하세요.
 

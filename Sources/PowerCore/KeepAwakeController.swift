@@ -1,3 +1,4 @@
+import AppLocalization
 import Foundation
 import IOKit.pwr_mgt
 
@@ -67,7 +68,7 @@ public final class KeepAwakeController {
 
     private func powerError(_ code: IOReturn) -> NSError {
         NSError(domain: "MouseWheelFix.Power", code: Int(code), userInfo: [
-            NSLocalizedDescriptionKey: "macOS가 잠자기 방지 요청을 처리하지 못했습니다. (코드 \(code))"
+            NSLocalizedDescriptionKey: L10n.text("macOS가 잠자기 방지 요청을 처리하지 못했습니다. (코드 %u)", code)
         ])
     }
 
