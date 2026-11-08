@@ -156,7 +156,7 @@ final class ScrollController {
             cancelAnimation()
             return Unmanaged.passUnretained(event)
         }
-        let pixels = event.getIntegerValueField(.scrollWheelEventPointDeltaAxis1)
+        let pixels = ScrollDistance.pixels(for: event)
         guard pixels != 0 else { return Unmanaged.passUnretained(event) }
         if output == nil {
             output = CGEvent(scrollWheelEvent2Source: nil, units: .pixel, wheelCount: 1, wheel1: 0, wheel2: 0, wheel3: 0)
@@ -166,7 +166,7 @@ final class ScrollController {
         output.flags = event.flags
         inputFlags = event.flags
         output.setIntegerValueField(.eventSourceUserData, value: Self.outputMarker)
-        smoother.add(pixels: Double(pixels), at: ProcessInfo.processInfo.systemUptime)
+        smoother.add(pixels: pixels, at: ProcessInfo.processInfo.systemUptime)
         if animationTimer == nil {
             // 첫 이동은 즉시 전달하고 입력이 있는 동안에만 최대 120Hz로 보간합니다.
             let timer = Timer(timeInterval: 1.0 / 120.0, repeats: true) { [weak self] _ in self?.tick() }

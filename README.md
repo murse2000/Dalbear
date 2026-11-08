@@ -4,7 +4,7 @@ Apple Silicon 전용 macOS 메뉴 막대 유틸리티입니다. 마우스 휠 �
 
 ## 설치
 
-[릴리즈](https://github.com/murse2000/Dalbear/releases/latest)에서 `Dalbear-0.1.1-arm64.dmg`를 내려받아 엽니다. Dalbear 아이콘을 Applications 폴더로 드래그한 뒤 응용 프로그램 폴더에서 실행하세요. 기존 앱은 먼저 종료하고 중복 복사 대신 교체합니다.
+[릴리즈](https://github.com/murse2000/Dalbear/releases/latest)에서 `Dalbear-0.1.2-arm64.dmg`를 내려받아 엽니다. Dalbear 아이콘을 Applications 폴더로 드래그한 뒤 응용 프로그램 폴더에서 실행하세요. 기존 앱은 먼저 종료하고 중복 복사 대신 교체합니다.
 
 휠 반전과 Safari 옆 버튼을 사용하려면 설치한 Dalbear에 손쉬운 사용 권한을 허용하세요. 자동 실행은 설치한 앱의 **로그인 시 자동 실행**에서 켭니다.
 
@@ -71,7 +71,7 @@ open dist/MouseWheelFix.app
 bash scripts/build-dmg.sh
 ```
 
-결과물은 `dist/Dalbear-0.1.1-arm64.dmg`와 `dist/Dalbear-설치안내.txt`입니다. 기존 설정 호환성을 위해 내부 실행 파일 이름과 번들 ID는 유지합니다.
+결과물은 `dist/Dalbear-0.1.2-arm64.dmg`와 `dist/Dalbear-설치안내.txt`입니다. 기존 설정 호환성을 위해 내부 실행 파일 이름과 번들 ID는 유지합니다.
 
 생성된 `dist/MouseWheelFix.app`을 응용 프로그램 폴더로 옮긴 뒤 실행하는 것을 권장합니다. 실행 위치를 정한 뒤 손쉬운 사용 권한을 허용하세요.
 
